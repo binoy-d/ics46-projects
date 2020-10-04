@@ -9,14 +9,12 @@
 /home/ics46/projects/proj0/app/main.cpp
 proj0.hpp
 /home/ics46/projects/proj0/app/proj0.hpp
-
-/home/ics46/projects/proj0/app/proj0.cpp
 map
 -
 string
 -
-proj0.hpp
-/home/ics46/projects/proj0/app/proj0.hpp
+iostream
+-
 
 /home/ics46/projects/proj0/app/proj0.hpp
 map
