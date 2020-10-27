@@ -66,8 +66,8 @@ TEST(GraphTest, GraphTest1)
 
 	std::vector<unsigned> expPathLengths = {0, 1, 1, 2};
 	std::vector<unsigned> expNumSP = {1, 1, 1, 2};
-
-	EXPECT_TRUE(pathLengths == expPathLengths && expNumSP == numShortestPaths);
+	EXPECT_EQ(pathLengths, expPathLengths);
+	EXPECT_EQ(expNumSP, numShortestPaths);
 
 }
 
@@ -86,7 +86,8 @@ TEST(GraphTest, GraphTest2)
 	std::vector<unsigned> expPathLengths = {0, 1, 1, 2, 1, 2};
 	std::vector<unsigned> expNumSP = {1, 1, 1, 2, 1, 1};
 
-	EXPECT_TRUE(pathLengths == expPathLengths && expNumSP == numShortestPaths);
+	EXPECT_EQ(pathLengths, expPathLengths);
+	EXPECT_EQ(expNumSP, numShortestPaths);
 }
 
 TEST(GraphTest, GraphTest3)
@@ -103,7 +104,9 @@ TEST(GraphTest, GraphTest3)
 	std::vector<unsigned> expPathLengths = {0, 1, 1, 2, 1, 2, 2, 3};
 	std::vector<unsigned> expNumSP = {1, 1, 1, 2, 1, 1, 1, 3};
 
-	EXPECT_TRUE(pathLengths == expPathLengths && expNumSP == numShortestPaths);
+	EXPECT_EQ(pathLengths, expPathLengths);
+	EXPECT_EQ(expNumSP, numShortestPaths);
 
 }
 }
+	

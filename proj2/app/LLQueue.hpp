@@ -59,15 +59,32 @@ public:
 
 	void print();
 };
-
-// TODO:  Fill in the functions here. 
-
+//copy constructor
+template <typename Object>
+LLQueue<Object>::LLQueue(const LLQueue & st){
+	Node<Object>* current = st.head;
+	while(current!=nullptr){
+		enqueue(current->data);
+		current = current->next;
+	}
+}
 //constructor
 template <typename Object>
 LLQueue<Object>::LLQueue(){
 	sz = 0;
 	head = nullptr;
 	tail = nullptr;
+}
+
+//assignment operator
+template <typename Object>
+LLQueue<Object> & LLQueue<Object>::operator=(const LLQueue & st){
+	Node<Object>* current = st.head;
+	while(current!=nullptr){
+		enqueue(current->data);
+		current = current->next;
+	}
+	return *this;
 }
 
 //size()
@@ -87,6 +104,9 @@ bool LLQueue<Object>::isEmpty() const noexcept{
 //front()
 template <typename Object>
 Object & LLQueue<Object>::front(){
+	if(head == nullptr){
+		throw QueueEmptyException("Queue is empty");
+	}
 	return head->data;
 }
 
@@ -94,6 +114,9 @@ Object & LLQueue<Object>::front(){
 //const front()
 template <typename Object>
 const Object & LLQueue<Object>::front() const{
+	if(head == nullptr){
+		throw QueueEmptyException("Queue is empty");
+	}
 	return head->data;
 }
 
