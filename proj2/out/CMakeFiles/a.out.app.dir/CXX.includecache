@@ -12,11 +12,11 @@ runtimeexcept.hpp
 iostream
 -
 
-/home/ics46/projects/proj2/app/main.cpp
-LLQueue.hpp
-/home/ics46/projects/proj2/app/LLQueue.hpp
+/home/ics46/projects/proj2/app/proj2.cpp
 proj2.hpp
 /home/ics46/projects/proj2/app/proj2.hpp
+LLQueue.hpp
+/home/ics46/projects/proj2/app/LLQueue.hpp
 vector
 -
 iostream

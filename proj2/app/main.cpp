@@ -22,6 +22,8 @@ int main()
         std::cout<<pathLengths[i]<<",";
     }
     std::cout<<std::endl;
-    
+    for(unsigned i = 0; i<7; ++i){
+        std::cout<<numShortestPaths[i]<<",";
+    }
 }
 

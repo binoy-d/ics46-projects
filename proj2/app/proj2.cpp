@@ -6,29 +6,43 @@
 void countPaths(const std::vector< std::vector<unsigned> > & friends, unsigned start, std::vector<unsigned> & pathLengths, std::vector<unsigned> & numShortestPaths)
 {
     LLQueue<unsigned> queue;
+
     bool *visited = new bool[friends.size()];
+
     for(unsigned i = 0; i<friends.size(); ++i){
         visited[i] = false;
-        pathLengths[i] = 0;
+        pathLengths[i] = UINT_MAX;
+        numShortestPaths[i] = 0;
     }
 
-    //visit start node, and add to queue
+    numShortestPaths[start] = 1;
+    pathLengths[start] = 0;
     visited[start] = true;
+    
     queue.enqueue(start);
 
     while(!queue.isEmpty()){
         //dequeue a vertex
-        start = queue.front();
+        unsigned current = queue.front();
+        std::cout<<"Current: "<<current<<" | ";
         queue.dequeue();
-        std::cout<<start<<std::endl;
-
-        for(unsigned i = 0; i<friends[start].size(); ++i){
-            if(!visited[friends[start][i]]){
-                visited[friends[start][i]] = true;
-                pathLengths[friends[start][i]] = pathLengths[start]+1;
-                queue.enqueue(friends[start][i]);
+        for(unsigned i = 0; i<friends[current].size(); ++i){
+            unsigned f = friends[current][i];
+            std::cout<<f<<" ";
+            if(!visited[f]){
+                visited[f] = true;
+                queue.enqueue(f);
             }
+            if(pathLengths[f]>pathLengths[current]+1){
+                pathLengths[f] = pathLengths[current]+1;
+                numShortestPaths[f] = numShortestPaths[current];
+            }else if(pathLengths[f] == pathLengths[current]+1){
+                numShortestPaths[f] += numShortestPaths[current];
+            }
+            
+            
         }
+        std::cout<<std::endl;
     }
 
 }
