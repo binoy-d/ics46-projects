@@ -46,3 +46,5 @@ void countPaths(const std::vector< std::vector<unsigned> > & friends, unsigned s
     }
 
 }
+
+

@@ -51,7 +51,16 @@ TEST(QueueTest, QueueTestString)
 	EXPECT_EQ(a.front(), "daniel");
 }
 
-
+TEST(QueueTest, QueueAssignAndDiff)
+{
+    LLQueue<std::string> a;
+    a.enqueue("hello");
+    LLQueue<std::string> b;
+    b = a;
+    b.enqueue("darn");
+    b.dequeue();
+    EXPECT_TRUE(a.front() != b.front() and b.front() == "darn");
+}
 
 
 TEST(GraphTest, GraphTest1)
@@ -106,7 +115,38 @@ TEST(GraphTest, GraphTest3)
 
 	EXPECT_EQ(pathLengths, expPathLengths);
 	EXPECT_EQ(expNumSP, numShortestPaths);
-
 }
+
+TEST(GraphTest, GraphTest4)
+{
+	std::vector< std::vector<unsigned> > g1 = {
+		{2, 3, 5},
+        {3},
+        {0, 5, 6},
+        {0, 1}, 
+        {5},
+        {0, 2, 4,  6},
+        {2, 5}
+	};
+	
+	std::vector<unsigned> pathLengths(7);
+	std::vector<unsigned> numShortestPaths(7);
+	
+	countPaths(g1, 0, pathLengths, numShortestPaths);
+
+	std::vector<unsigned> expPathLengths = {0, 2, 1, 1, 2, 1, 2};
+	std::vector<unsigned> expNumSP = {1, 1, 1, 1, 1, 1, 2};
+
+	EXPECT_EQ(pathLengths, expPathLengths);
+	EXPECT_EQ(expNumSP, numShortestPaths);
+}
+
+
+
+
+
+
+
+
 }
 	
