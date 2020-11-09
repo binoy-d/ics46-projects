@@ -3,7 +3,6 @@
 #include <iostream>
 const int BASE_TO_USE = 41; 
 const double LOAD_LIMIT = 0.27;
-const bool DEBUG = false;
 // returns s, as a number in the given base, mod the given modulus
 int hashFunction(std::string s, int base, int mod)
 {
@@ -42,16 +41,12 @@ void WordSet::initTable(){
 }
 WordSet::~WordSet()
 {
-	if(DEBUG) std::cout<<"deleting table"<<std::endl;
-
 	delete[] table;
 }
 
 void WordSet::insert(std::string s)
 {
-	if(DEBUG) std::cout<<"inserting "<<s<<std::endl;
 	int hash = hashFunction(s, BASE_TO_USE, SIZES[sizeIndex]);
-	if(DEBUG) std::cout<<", starting hash = "<<hash<<std::endl;
 	int index = hash;
 
 	//taken straight from zybooks
@@ -67,23 +62,12 @@ void WordSet::insert(std::string s)
 		i++;
 		index = (hash+(i*i))%SIZES[sizeIndex];
 	}
-	if(DEBUG) printTable();
-	if(getLoadFactor()>LOAD_LIMIT){
+	if(1.0*numItems/getCapacity()>LOAD_LIMIT){
 		rehash();
 	}
 }
 
-
-void WordSet::printTable(){
-	std::cout<<"************************"<<std::endl;
-
-	for(unsigned i = 0; i<SIZES[sizeIndex]; ++i){
-		if(table[i].status!=0)
-			std::cout<<"table["<<i<<"] = "<<table[i].key<<std::endl;
-	}
-}
 void WordSet::rehash(){
-	if(DEBUG) std::cout<<"rehashing"<<std::endl;
 	int previousCapacity = getCapacity();
 	sizeIndex++;
 	numItems = 0;
@@ -97,22 +81,17 @@ void WordSet::rehash(){
 		}
 	}
 	delete[] previousTable;
-	if(DEBUG) std::cout<<"previous table deleted, table is now: "<<std::endl;
-	if(DEBUG) printTable();
 }
 
 bool WordSet::contains(std::string s) const
 {
 	int hash = hashFunction(s, BASE_TO_USE, SIZES[sizeIndex]);
 	int index = hash;
-	if(DEBUG) std::cout<<"checking if contains "<<s<<std::endl;
 	//taken straight from zybooks
 	unsigned numProbed = 0;
 	unsigned i = 0;
 	while(numProbed<SIZES[sizeIndex]){
-		if(DEBUG) std::cout<<"checking if "<<table[index].key<<"=="<<s<<std::endl;
 		if(table[index].status!=0 && table[index].key == s){
-			if(DEBUG) std::cout<<"true"<<std::endl;
 			return true;
 		}
 		//increment i and recompute index
@@ -134,14 +113,5 @@ int WordSet::getCount() const
 int WordSet::getCapacity() const
 {
 	return SIZES[sizeIndex]; 
-}
-
-
-
-//PRIVATE MEMBER FUNCTIONS
-
-
-double WordSet::getLoadFactor() const{
-	return 1.0*numItems/getCapacity();
 }
 

@@ -29,50 +29,37 @@ void loadWordsIntoTable(WordSet & words, std::istream & in)
 // You probably want to change this function.
 std::string convert(std::string s1, std::string s2, const WordSet & words)
 {
-	
-	if(!words.contains(s1)){
-		return "impossible";
-	}
 	std::queue<std::string> todo;
-	std::set<std::string> used;
+	WordSet used;
 	todo.push(s1);
 	int wordSize = s1.size();
 
 	std::map<std::string, std::string> paths;
-
+	// basically BFS except you need 2 for loops 
+	// to get adjacencent nodes(words that are off by 1 letter)
 	while(!todo.empty()){
-		int origSize = todo.size();
-		
-		
-		
-		for(int j = 0; j<origSize; ++j){
-			std::string current = todo.front();
-			todo.pop();
-			for(int i = 0; i<wordSize; ++i){
-				std::string preserved = current;
-				char prevChar = current[i];//preserve char
-				for(char c = 'a'; c<='z'; ++c){
-					current[i] = c;
-					//if we reached, trace back
-					if(current == s2){
-						paths.insert(std::pair<std::string, std::string>(current, preserved));
-						return getPath(paths, s1, s2);
-					}	
-					//if its a valid word, and hasnt been used yet
-					if(used.find(current)==used.end() && words.contains(current)){
-						used.insert(current);//use it, and add to queue
-						todo.push(current);
-						paths.insert(std::pair<std::string, std::string>(current, preserved));
-					}
+		std::string current = todo.front();
+		todo.pop();
+		for(int i = 0; i<wordSize; ++i){
+			std::string prev = current;//preserve word
+			for(char c = 'a'; c<='z'; ++c){
+				current[i] = c;
+				//if we reached, trace back
+				if(current == s2){
+					paths.insert(std::pair<std::string, std::string>(current, prev));
+					return getPath(paths, s1, s2);
+				}	
+				//if its a valid word, and hasnt been used yet
+				if(!used.contains(current) && words.contains(current)){
+					used.insert(current);//use it, and add to queue
+					todo.push(current);
+					paths.insert(std::pair<std::string, std::string>(current, prev));
 				}
-				current[i] = prevChar;//reset that word
 			}
-		}
-
-		
+			current = prev;//reset that word
+		}	
 	}
-
-	return "foo";  // stub obviously 
+	return "if you're seeing this i have failed miserably, please have mercy on me";  // stub obviously 
 }
 
 

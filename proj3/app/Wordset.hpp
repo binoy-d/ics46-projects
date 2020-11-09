@@ -48,10 +48,8 @@ public:
 
 private:
 	// You may declare private functions and member variables here.
-	double getLoadFactor() const;
 	void rehash();
 	void initTable();
-	void printTable();
 
 	struct Entry{
 		std::string key;
