@@ -49,10 +49,16 @@ public:
 private:
 	// You may declare private functions and member variables here.
 	double getLoadFactor() const;
-	bool isEmptyAt(unsigned index) const;
-	void reHash();
-	
-	std::string* table;
+	void rehash();
+	void initTable();
+	void printTable();
+
+	struct Entry{
+		std::string key;
+		unsigned status; //0 = empty, 1 = used
+	};
+
+	Entry* table;
 
 	unsigned int sizeIndex;
 	unsigned int numItems;

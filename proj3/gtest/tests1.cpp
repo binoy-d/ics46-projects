@@ -3,7 +3,9 @@
 #include "proj3.hpp"
 #include <string>
 #include <fstream>
-
+#include <map>
+#include <iostream>
+#include <set>
 namespace{
 
 
@@ -77,6 +79,7 @@ TEST(SampleTest, Abandoning)
 	words.insert("abandoning");
 	EXPECT_TRUE(words.contains("abandoning"));
 }
+
 
 
 TEST(ConvertWords, AntToArt)
