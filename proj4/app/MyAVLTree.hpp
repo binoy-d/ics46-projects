@@ -17,11 +17,23 @@ public:
 };
 
 template<typename Key, typename Value>
-struct Node{
-	Key* key;
-	Value* val;
+struct Node {
+	Key key;
+	Value val;
 	Node* left;
 	Node* right;
+	size_t height;
+	Node(Key k, Value v){
+		key = k;
+		val = v;
+		left = nullptr;
+		right = nullptr;
+		height = 1;
+	}
+	~Node(){
+		if(left) delete left;
+		if(right) delete right;
+	}
 };
 
 
@@ -35,6 +47,16 @@ private:
 	size_t sz;
 	Node<Key, Value>* rootNode;
 	bool containsHelper(const Node<Key, Value>* n,const Key &k) const;
+	void inOrderHelper(const Node<Key, Value>* n, std::vector<Key> &out) const;
+	void preOrderHelper(const Node<Key, Value>* n, std::vector<Key> &out) const;
+	void postOrderHelper(const Node<Key, Value>* n, std::vector<Key> &out) const;
+	Node<Key, Value>* insertHelper(Node<Key, Value>* n, const Key & k, const Value & v);
+	size_t height(const Node<Key, Value>* n) const;
+	int getBalanceFactor(const Node<Key, Value>* n) const;
+	void updateHeight( Node<Key, Value>* n);
+	Node<Key, Value>* leftRotate( Node<Key, Value>* n);
+	Node<Key, Value>* rightRotate( Node<Key, Value>* n);
+	
 public:
 	MyAVLTree();
 
@@ -48,7 +70,7 @@ public:
 	// The destructor is, however, required. 
 	~MyAVLTree()
 	{
-		// TODO
+		delete rootNode;
 	}
 
 	// size() returns the number of distinct keys in the tree.
@@ -89,7 +111,6 @@ public:
 	std::vector<Key> preOrder() const;
 	std::vector<Key> postOrder() const;
 
-
 };
 
 
@@ -103,7 +124,7 @@ MyAVLTree<Key,Value>::MyAVLTree():
 template<typename Key, typename Value>
 size_t MyAVLTree<Key, Value>::size() const noexcept
 {
-	return 0; // stub
+	return sz; // stub
 }
 
 template<typename Key, typename Value>
@@ -119,7 +140,7 @@ bool MyAVLTree<Key, Value>::contains(const Key &k) const
 
 	Node<Key, Value>* current = rootNode;
 	while(current!=nullptr){
-		Key nodeKey = *(current->key);
+		Key nodeKey = current->key;
 		if(DEBUG) std::cout<<"current key = "<<nodeKey<<std::endl;
 		if(k>nodeKey){
 			current = current->right;
@@ -168,107 +189,204 @@ template<typename Key, typename Value>
 Value & MyAVLTree<Key, Value>::find(const Key & k)
 {
 	Node<Key, Value>* current = rootNode;
-	Key nodeKey = *(current->key);
+	Key nodeKey = current->key;
 	while(current!=nullptr){
 		if(nodeKey<k){
 			current = current->right;
 		}else if(nodeKey>k){
 			current = current->left;
 		}else{
-			return  *(current->val);
+			return  current->val;
 		}
+		nodeKey = current->key;
 	}
-	return *(current->val);
+	return current->val;
 }
 
 template<typename Key, typename Value>
 const Value & MyAVLTree<Key, Value>::find(const Key & k) const
 {
 	Node<Key, Value>* current = rootNode;
-	Key nodeKey = *(current->key);
+	Key nodeKey = current->key;
 	while(current!=nullptr){
 		if(nodeKey<k){
 			current = current->right;
 		}else if(nodeKey>k){
 			current = current->left;
 		}else{
-			return  *(current->val);
+			return  current->val;
 		}
+		nodeKey = current->key;
 	}
-	return *(current->val);
+	return current->val;
 }
 
 template<typename Key, typename Value>
 void MyAVLTree<Key, Value>::insert(const Key & k, const Value & v)
 {
-	Node<Key, Value>* newNode = new Node<Key, Value>();
-	newNode->key = new Key(k);
-	newNode->val = new Value(v);
-	
-	if(rootNode == nullptr){
-		rootNode = newNode;
-		if(DEBUG) std::cout<<"inserted root node, key = "<<*(rootNode->key)<<std::endl;
-		return;
-	}
-
-
-	Node<Key, Value>* current = rootNode;
-	while(current!=nullptr){
-		Key nodeKey = *(current->key);
-		if(DEBUG) std::cout<<"current key = "<<nodeKey<<std::endl;
-		if(k>nodeKey){
-			if(current->right){
-				current = current->right;
-			}else{
-				current->right = newNode;
-				if(DEBUG) std::cout<<"returning"<<std::endl;
-				sz++;
-				return;
-			}
-		}else if(k<nodeKey){
-			if(current->left){
-				current = current->left;
-			}else{
-				current->left = newNode;
-				if(DEBUG) std::cout<<"returning"<<std::endl;
-				sz++;
-				return;
-			}
-		}else{
-			delete newNode;
-			return;//idk if this is a good idea long term
-		}
-	}
+	rootNode = insertHelper(rootNode, k, v);
+	sz++;
 }
 
+
+template<typename Key, typename Value>
+Node<Key, Value>* MyAVLTree<Key, Value>::insertHelper(Node<Key, Value>* n, const Key & k, const Value & v){
+	//normal bst insert
+	if(DEBUG) std::cout<<"Inserting key : "<<k<<std::endl;
+	if(n == nullptr){
+		return new Node<Key, Value>(k, v);;
+	}else{
+		if(k<n->key){
+			n->left = insertHelper(n->left, k, v);
+		}else if(k>n->key){
+			n->right = insertHelper(n->right, k, v);
+		}
+	}
+
+	//update height
+	updateHeight(n);
+	//rotation time lmao
+	int balanceFactor = getBalanceFactor(n);
+	if(DEBUG) std::cout<<"Got balance factor: "<<balanceFactor<<std::endl;
+
+	//4 cases:
+	if(balanceFactor>1 && k<n->left->key){//left left
+		//right rotate n
+		return rightRotate(n);
+	}else if(balanceFactor<-1 && k>n->right->key){//right right
+		//left rotate n
+		return leftRotate(n);
+	}else if(balanceFactor>1 && k>n->left->key){//left right
+		//left rotate n->left
+		n->left = leftRotate(n->left);
+		//right rotate n
+		return rightRotate(n);
+
+	}else if(balanceFactor<-1 && k<n->right->key){//right left
+		//right rotate n->right
+		n->right = rightRotate(n->right);
+		//left rotate n
+		return leftRotate(n);
+	}
+	return n;
+}
+
+
+template<typename Key, typename Value>
+Node<Key, Value>* MyAVLTree<Key, Value>::leftRotate( Node<Key, Value>* n){
+	Node<Key, Value>* ogRight = n->right;
+	Node<Key, Value>* ogRightLeft = ogRight->left;
+
+	ogRight->left = n;
+	n->right = ogRightLeft;
+
+	//update heights
+	updateHeight(n);
+	updateHeight(ogRight);
+
+	return ogRight;//new rootNode
+}
+
+template<typename Key, typename Value>
+Node<Key, Value>* MyAVLTree<Key, Value>::rightRotate( Node<Key, Value>* n){
+	Node<Key, Value>* ogLeft = n->left;
+	Node<Key, Value>* ogLeftRight = ogLeft->right;
+
+	ogLeft->right = n;
+	n->left = ogLeftRight;
+
+	//update heights
+	updateHeight(n);
+	updateHeight(ogLeft);
+
+	return ogLeft;//new rootNode
+}
+
+template<typename Key, typename Value>
+void MyAVLTree<Key, Value>::updateHeight( Node<Key, Value>* n){
+	size_t leftHeight = height(n->left);
+	size_t rightHeight = height(n->right);
+	n->height = 1 + leftHeight>rightHeight?leftHeight:rightHeight; 
+}
+
+
+
+template<typename Key, typename Value>
+size_t MyAVLTree<Key, Value>::height(const Node<Key, Value>* n) const{
+	return n==nullptr?0:n->height;
+}
+
+
+template<typename Key, typename Value>
+int MyAVLTree<Key, Value>::getBalanceFactor(const Node<Key, Value>* n) const{
+	return n==nullptr?0:height(n->left)-height(n->right);
+}
 
 
 
 template<typename Key, typename Value>
 std::vector<Key> MyAVLTree<Key, Value>::inOrder() const
 {
-	std::vector<Key> foo;
-	return foo; 
+	std::vector<Key> out;
+	inOrderHelper(rootNode, out); 
+	return out;
+}
+
+
+template<typename Key, typename Value>
+void MyAVLTree<Key, Value>::inOrderHelper(const Node<Key, Value>* n, std::vector<Key> &out) const
+{
+	if(n == nullptr){
+		return;
+	}
+	inOrderHelper(n->left, out);
+	out.push_back(n->key);
+	inOrderHelper(n->right, out);
 }
 
 
 template<typename Key, typename Value>
 std::vector<Key> MyAVLTree<Key, Value>::preOrder() const
 {
-	std::vector<Key> foo;
-	return foo; 
+	std::vector<Key> out;
+	preOrderHelper(rootNode, out); 
+	return out;
+}
+
+
+template<typename Key, typename Value>
+void MyAVLTree<Key, Value>::preOrderHelper(const Node<Key, Value>* n, std::vector<Key> &out) const
+{
+	if(n == nullptr){
+		return;
+	}
+	out.push_back(n->key);
+	preOrderHelper(n->left, out);
+	preOrderHelper(n->right, out);
 }
 
 
 template<typename Key, typename Value>
 std::vector<Key> MyAVLTree<Key, Value>::postOrder() const
 {
-	std::vector<Key> foo;
-	return foo; 
+	std::vector<Key> out;
+	postOrderHelper(rootNode, out); 
+	return out;
 }
 
 
 
+template<typename Key, typename Value>
+void MyAVLTree<Key, Value>::postOrderHelper(const Node<Key, Value>* n, std::vector<Key> &out) const
+{
+	if(n == nullptr){
+		return;
+	}
+	postOrderHelper(n->left, out);
+	postOrderHelper(n->right, out);
+	out.push_back(n->key);
+	
+}
 
 
 
