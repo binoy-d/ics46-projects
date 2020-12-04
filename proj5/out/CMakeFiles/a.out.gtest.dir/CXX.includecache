@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/ics46/projects/proj5/app/MyPriorityQueue.hpp
+runtimeexcept.hpp
+/home/ics46/projects/proj5/app/runtimeexcept.hpp
+iostream
+-
+
+/home/ics46/projects/proj5/app/edge.hpp
+
+/home/ics46/projects/proj5/app/proj5.cpp
+proj5.hpp
+/home/ics46/projects/proj5/app/proj5.hpp
+MyPriorityQueue.hpp
+/home/ics46/projects/proj5/app/MyPriorityQueue.hpp
+iostream
+-
+
+/home/ics46/projects/proj5/app/proj5.hpp
+vector
+-
+edge.hpp
+/home/ics46/projects/proj5/app/edge.hpp
+
+/home/ics46/projects/proj5/app/runtimeexcept.hpp
+string
+-
+
