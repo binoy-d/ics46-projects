@@ -34,7 +34,7 @@ namespace{
 		std::vector<Edge> mst = compute_mst(gr);
 		EXPECT_TRUE( verifyMST(mst, gr) );
 	}
-	/*
+	
 	TEST(TestingMST, MST_n50)
 	{
 		std::vector< std::vector< unsigned>  > gr = { 
@@ -709,5 +709,5 @@ namespace{
 		std::vector<Edge> mst = compute_mst(gr);
 		EXPECT_TRUE( verifyMST(mst, gr) );
 	}
-*/
+
 }

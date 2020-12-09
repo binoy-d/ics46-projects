@@ -87,15 +87,19 @@ TEST(SampleTests, SimpleExtractMin)
 	EXPECT_EQ(mpq.size(), 3);
 
 	mpq.extractMin();
+    EXPECT_EQ(mpq.min(), 12);
+    EXPECT_EQ(mpq.size(), 2);
+
+	mpq.extractMin();
 	EXPECT_EQ(mpq.min(), 23);
-	EXPECT_EQ(mpq.size(), 2);
+	EXPECT_EQ(mpq.size(), 1);
 
 	mpq.insert(12);
 	mpq.insert(13);
 	mpq.insert(3);
 
 	EXPECT_EQ(mpq.min(), 3);
-	EXPECT_EQ(mpq.size(), 5);
+	EXPECT_EQ(mpq.size(), 4);
 }
 TEST(SampleTests, IsEmpty)
 {

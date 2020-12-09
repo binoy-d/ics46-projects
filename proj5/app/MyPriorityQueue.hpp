@@ -134,10 +134,8 @@ void MyPriorityQueue<Object>::extractMinHelper(const Object &elem, unsigned inde
 
 	Object min = q[index*2];
 	unsigned minIndex = index*2;
-	if(index*2+1>=q.size()){
-		return;
-	}
-	if(q[index*2+1]<min){
+
+	if(index*2+1<q.size() && q[index*2+1]<min){
 		min = q[index*2+1];
 		minIndex = index*2+1;
 	}

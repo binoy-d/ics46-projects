@@ -13,8 +13,6 @@ std::vector<Edge> compute_mst(std::vector< std::vector<unsigned>> & graph)
 	Edge first(0, 0, 0);
 	toExplore.insert(first);
 	distances[0] = 0;
-
-
 	MyPriorityQueue<Edge> out;
 
 
